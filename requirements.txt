@@ -1,0 +1,6 @@
+Flask
+yt_dlp
+youtube_transcript_api
+transformers
+torch
+requests
