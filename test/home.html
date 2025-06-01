@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>YouTube Summary</title>
+</head>
+<body>
+  <h1>YouTube Video Summarizer</h1>
+  <input type="text" id="youtubeUrl" placeholder="Enter YouTube Video URL" size="50">
+  <button onclick="getSummary()">Summarize</button>
+  <h2>Summary</h2>
+  <div id="result"></div>
+
+  <script>
+    async function getSummary() {
+      const url = document.getElementById("youtubeUrl").value;
+      const resultDiv = document.getElementById("result");
+
+      // Show spinner or message immediately
+      resultDiv.innerHTML = "<p style='color:blue;'>Processing... please wait</p>";
+
+      try {
+        const response = await fetch("/summarize", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url }),
+        });
+
+        const data = await response.json();
+
+        if (data.error) {
+          resultDiv.innerHTML = `<p style="color:red;">Error: ${data.error}</p>`;
+        } else {
+          resultDiv.innerHTML = `
+            <h3>${data.title}</h3>
+            <p><strong>Channel:</strong> ${data.channel}</p>
+            <iframe width="560" height="315"
+              src="https://www.youtube.com/embed/${data.video_id}"
+              title="YouTube video player"
+              frameborder="0"
+              allowfullscreen>
+            </iframe>
+            <h4>AI Summary:</h4>
+            <p style="background: #eef; padding: 10px; border-radius: 5px;">${data.summary}</p>
+            <h4>Transcript:</h4>
+            <pre style="white-space: pre-wrap; background: #f4f4f4; padding: 10px; border-radius: 5px; line-height: 1.6em; font-family: sans-serif;">${data.transcript}</pre>
+          `;
+        }
+      } catch (error) {
+        resultDiv.innerHTML = `<p style="color:red;">An error occurred: ${error.message}</p>`;
+      }
+  }
+
+  </script>
+</body>
+</html>
