@@ -4,3 +4,4 @@ youtube_transcript_api
 transformers
 torch
 requests
+flask-cors
